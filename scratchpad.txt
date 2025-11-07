@@ -1,0 +1,90 @@
+I've successfully added a CHANGELOG.md to the library I published and added a v1.0.0 tag to it. I've also managed to create a new project that uses the published library through a lib_deps reference to the github repo where I published it. It all works as expected, which is sort of amazing.
+
+Now I'd like to develop a new library that uses the library I just published. That is, the new library depends on the already published library. To do this, I've created a folder for the new library and have structured it in the same way to the one I published. The library.json file for the new library looks like this:
+
+{
+  "name": "TouchSlider",
+  "version": "1.0.0",
+  "description": "Capacitive linear slider touch sensor library for Arduino/PlatformIO",
+  "keywords": ["touch", "sensor", "capacitive"],
+  "authors": [
+    { "name": "D. L. Ehnebuske", "url": "https://github.com/dehne" }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/dehne/TouchSlider",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dehne/TouchSlider.git"
+  },
+  "frameworks": ["arduino"],
+  "platforms": ["AVR"],
+  "build": {
+    "includeDir": "src",
+    "srcDir": "src"
+  },
+  "dependencies": [
+    {
+        "name": "TouchSensor",
+        "version" : "https://github.com/dehne/TouchSensor"
+    }
+  ],
+  "export": {
+    "ignore": [
+      "docs/**",
+      ".github/**",
+      ".*",
+      "CMakeLists.txt"
+    ]
+  }
+}
+
+As you can see, I've included a "dependencies" item that "points" to the published library. Is this the correct way to tell Platformio that this library is dependent on the published one?
+
+[Answer]: Right idea, wrong syntax.
+
+=====
+
+Great, that makes sense. On to the next step. How do I tell Platformio I'd like it to do a clean build, including in particular refreshing the remote library dependencies? After making the change to the library.json, the build for one of the examples in the new library fails. Before going down some long path to figure it out, I'd like to be sure everything's in sync.
+
+[answer]: "pio run -t clean" followed by "pio pkg update -l https://github.com/dehne/TouchSensor"
+
+=====
+
+If, as I do in the case at hand, I have a dependencies item in a library.json that specifies a dependency on a library in a git repository but does not specify that it's dependent on a specific version, does Platformio ever check on whether the library has been updated? Or should I plan on doing that manually?
+
+[answer]: Platformio does not check after things are set up, you need to do it manually.
+
+======
+
+The "callback" pattern is a common one in software code libraries: The library provides a function for the client to use to "register" a client-provided function that the library calls when a specified event happens. Once registered, when the event occurs, the library calls the client's function. The function then "handles" the event on behalf of the client and returns.
+
+In the version of this that I'm familiar with in the C (and C++) context, the client's callback function seems always to be a "free function," i.e., not a member function for some object. I have such a library I'd like to use from "inside" a C++ object. That is to say, I'd like to register a member function of an object as a callback.
+
+Is this possible in C++? Would it be possible if I modified the library I'd like to use to make it possible?
+ [answer]: Several options, most, super ugly. One involving a change to the library API:
+
+    // C API we can't change:
+    extern "C" void register_cb(void (*cb)(int event_code, void* user), void* user);
+
+    class Handler {
+    public:
+        void start() {
+            register_cb(&Handler::thunk, this);   // pass 'this' as context
+        }
+
+    private:
+        void on_event(int code) {
+            // ... real handling ...
+        }
+
+        static void thunk(int code, void* user) {
+            auto* self = static_cast<Handler*>(user);
+            self->on_event(code);
+        }
+    };
+
+That is, have the shape of the library-defined callback function pass a client-defined hunk o' data as one of its parameters; have the library's register function take both the function to call and the address of of the user-defined hunk o' data; define a static "thunk" in the client class whose shape matches the callback function. Then use the user-defined data pointer to have "this" of the object to be called passed around and used in the thunk to convert from a static function to the member function.
+
+The "normal" way to do the callback pattern in C++ involves std::function, which isn't available in the Arduino framework.
+
+=====

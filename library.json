@@ -1,0 +1,38 @@
+{
+  "name": "TouchSlider",
+  "version": "1.0.0",
+  "description": "Capacitive linear slider touch sensor library for Arduino/PlatformIO",
+  "keywords": ["touch", "sensor", "capacitive"],
+  "authors": [
+    { "name": "D. L. Ehnebuske", "url": "https://github.com/dehne" }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/dehne/TouchSlider",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dehne/TouchSlider.git"
+  },
+  "frameworks": ["arduino"],
+  "platforms": ["AVR"],
+  "build": {
+    "includeDir": "src",
+    "srcDir": "src"
+  },
+  "dependencies": [
+    {
+        "name": "TouchSensor",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/dehne/TouchSensor.git"
+        }
+    }
+  ],
+  "export": {
+    "ignore": [
+      "docs/**",
+      ".github/**",
+      ".*",
+      "CMakeLists.txt"
+    ]
+  }
+}
