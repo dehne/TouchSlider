@@ -4,8 +4,8 @@
  * 
  *****
  * 
- * TouchSlider V0.1.0, October 2025
- * Copyright (C) 2024-2025 D.L. Ehnebuske
+ * TouchSlider V1.0.0, November 2025
+ * Copyright (C) 2025 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
