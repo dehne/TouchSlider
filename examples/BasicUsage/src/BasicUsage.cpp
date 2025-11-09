@@ -39,8 +39,8 @@
 #define SENSOR_C_PIN    (4)                               // GPIO to which sensor "C" is attached
 #define SENSOR_D_PIN    (5)                               // GPIO to which sensor "D" is attached
 
-constexpr uint32_t SLIDER_MIN = -100;                     // The lowest the slider can be
-constexpr uint32_t SLIDER_MAX = 100;                      // The highest the slider can be
+constexpr int32_t SLIDER_MIN = -100;                      // The lowest the slider can be
+constexpr int32_t SLIDER_MAX = 100;                       // The highest the slider can be
 
 #define DEBUG                                             // Uncomment to enable debugging code
 
@@ -57,13 +57,17 @@ uint8_t pins[] = {SENSOR_A_PIN, SENSOR_B_PIN, SENSOR_C_PIN, SENSOR_D_PIN};
 TouchSlider slider {pins, SENSOR_COUNT};
 
 /**
- * @brief   Our "change handler." Called (from run()) when a change in the value of our slider is detected.
+ * @brief   Our "change handler." Called by slider when a change in its value is detected.
  * 
- * @param value 
+ * @param value   The new value of the TouchSlider
+ * @param notUsed Unused parameter containing whever it was we passed when the change handler was registered
+ *                in our case, it's nullptr.
  */
-void onChanged(int32_t value) {
+void onChanged(int32_t value, void* notUsed) {
   Serial.print(F("\r"));
+  #ifdef TSL_DEBUG
   slider.printState();
+  #endif
   Serial.print(F("Slider: "));
   Serial.print(value);
   Serial.print(F("   "));
@@ -82,11 +86,10 @@ void setup() {
       // Spin!
     }
   }
-  slider.setChangeHandler(onChanged);
+  slider.setChangeHandler(onChanged, nullptr);
 }
 
 void loop() {
   // Let the sensors do their thing
   TouchSensor::run();
-  slider.run();
   }
