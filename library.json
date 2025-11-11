@@ -1,6 +1,6 @@
 {
   "name": "TouchSlider",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Capacitive linear slider touch sensor library for Arduino/PlatformIO",
   "keywords": ["touch", "sensor", "capacitive"],
   "authors": [
