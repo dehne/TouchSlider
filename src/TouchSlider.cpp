@@ -4,7 +4,7 @@
  * 
  *****
  * 
- * TouchSlider V1.0.0, November 2025
+ * TouchSlider V1.0.1, November 2025
  * Copyright (C) 2025 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
