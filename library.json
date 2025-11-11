@@ -27,6 +27,16 @@
         }
     }
   ],
+  "examples": [
+    {
+        "name": "BasicUsage",
+        "base": "examples/BasicUsage",
+        "files": [
+            "platformio.ini",
+            "src/BasicUsage.cpp"
+          ]
+    }
+  ],
   "export": {
     "ignore": [
       "docs/**",
